@@ -1,1 +1,37 @@
-{}
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "Name": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Address": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "CreatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "ID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SubscriberCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        }
+    }
+}
