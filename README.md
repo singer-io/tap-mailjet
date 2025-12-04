@@ -10,23 +10,13 @@ This tap:
 - Extracts the following resources:
     - [Message](https://dev.mailjet.com/email/reference/messages#v3_get_message)
 
-    - [Messageinformation](https://dev.mailjet.com/email/reference/messages#v3_get_messageinformation)
-
     - [Contact](https://dev.mailjet.com/email/reference/contacts/contact#v3_get_contact)
 
     - [Contactslist](https://dev.mailjet.com/email/reference/contacts/contact-list#v3_get_contactslist)
 
-    - [Contactdata](https://dev.mailjet.com/email/reference/contacts/contact-properties#v3_get_contactdata)
-
-    - [Contactmetadata](https://dev.mailjet.com/email/reference/contacts/contact-properties#v3_get_contactmetadata)
-
     - [Listrecipient](https://dev.mailjet.com/email/reference/contacts/subscriptions#v3_get_listrecipient)
 
     - [Campaign](https://dev.mailjet.com/email/reference/campaigns/sent-campaigns#v3_get_campaign)
-
-    - [Contactfilter](https://dev.mailjet.com/email/reference/segmentation#v3_get_contactfilter)
-
-    - [Campaignoverview](https://dev.mailjet.com/email/reference/statistics#v3_get_campaignoverview)
 
 - Outputs the schema for each resource
 - Incrementally pulls data based on the input state
@@ -39,10 +29,6 @@ This tap:
 - Primary keys: ['id']
 - Replication strategy: FULL_TABLE
 
-**[messageinformation](https://dev.mailjet.com/email/reference/messages#v3_get_messageinformation)**
-- Primary keys: ['id']
-- Replication strategy: FULL_TABLE
-
 **[contact](https://dev.mailjet.com/email/reference/contacts/contact#v3_get_contact)**
 - Primary keys: ['id']
 - Replication strategy: FULL_TABLE
@@ -51,27 +37,11 @@ This tap:
 - Primary keys: ['id']
 - Replication strategy: FULL_TABLE
 
-**[contactdata](https://dev.mailjet.com/email/reference/contacts/contact-properties#v3_get_contactdata)**
-- Primary keys: ['id']
-- Replication strategy: FULL_TABLE
-
-**[contactmetadata](https://dev.mailjet.com/email/reference/contacts/contact-properties#v3_get_contactmetadata)**
-- Primary keys: ['id']
-- Replication strategy: FULL_TABLE
-
 **[listrecipient](https://dev.mailjet.com/email/reference/contacts/subscriptions#v3_get_listrecipient)**
 - Primary keys: ['id']
 - Replication strategy: FULL_TABLE
 
 **[campaign](https://dev.mailjet.com/email/reference/campaigns/sent-campaigns#v3_get_campaign)**
-- Primary keys: ['id']
-- Replication strategy: FULL_TABLE
-
-**[contactfilter](https://dev.mailjet.com/email/reference/segmentation#v3_get_contactfilter)**
-- Primary keys: ['id']
-- Replication strategy: FULL_TABLE
-
-**[campaignoverview](https://dev.mailjet.com/email/reference/statistics#v3_get_campaignoverview)**
 - Primary keys: ['id']
 - Replication strategy: FULL_TABLE
 

@@ -40,13 +40,6 @@ class mailjetBaseTest(BaseCase):
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100
             },
-            "messageinformation": {
-                cls.PRIMARY_KEYS: { "id" },
-                cls.REPLICATION_METHOD: cls.FULL_TABLE,
-                cls.REPLICATION_KEYS: set(),
-                cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
-            },
             "contact": {
                 cls.PRIMARY_KEYS: { "id" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
@@ -61,20 +54,6 @@ class mailjetBaseTest(BaseCase):
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100
             },
-            "contactdata": {
-                cls.PRIMARY_KEYS: { "id" },
-                cls.REPLICATION_METHOD: cls.FULL_TABLE,
-                cls.REPLICATION_KEYS: set(),
-                cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
-            },
-            "contactmetadata": {
-                cls.PRIMARY_KEYS: { "id" },
-                cls.REPLICATION_METHOD: cls.FULL_TABLE,
-                cls.REPLICATION_KEYS: set(),
-                cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
-            },
             "listrecipient": {
                 cls.PRIMARY_KEYS: { "id" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
@@ -83,20 +62,6 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 100
             },
             "campaign": {
-                cls.PRIMARY_KEYS: { "id" },
-                cls.REPLICATION_METHOD: cls.FULL_TABLE,
-                cls.REPLICATION_KEYS: set(),
-                cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
-            },
-            "contactfilter": {
-                cls.PRIMARY_KEYS: { "id" },
-                cls.REPLICATION_METHOD: cls.FULL_TABLE,
-                cls.REPLICATION_KEYS: set(),
-                cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
-            },
-            "campaignoverview": {
                 cls.PRIMARY_KEYS: { "id" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
