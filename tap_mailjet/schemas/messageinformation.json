@@ -1,0 +1,81 @@
+{
+    "type": "object",
+    "properties": {
+        "CampaignID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ClickTrackedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ContactID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "CreatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "ID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "MessageSize": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "OpenTrackedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "QueuedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SendEndAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "SentCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SpamAssassinRules": {
+            "type": [
+                "object",
+                "null"
+            ],
+            "additionalProperties": true
+        },
+        "SpamAssassinScore": {
+            "type": [
+                "string",
+                "null"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

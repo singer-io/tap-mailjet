@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "properties": {
+        "ClickedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "LinkId": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Url": {
+            "type": [
+                "string",
+                "null"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

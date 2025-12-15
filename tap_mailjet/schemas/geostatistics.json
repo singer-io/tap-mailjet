@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "properties": {
+        "ClickedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Country": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "OpenedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        }
+    },
+    "additionalProperties": false
+}
