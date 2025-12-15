@@ -48,9 +48,22 @@ class Client:
     def __init__(self, config: Mapping[str, Any]) -> None:
         self.config = config
         self._session = session()
-        self.base_url = ""
+        self.base_url = "https://api.mailjet.com"
         config_request_timeout = config.get("request_timeout")
         self.request_timeout = float(config_request_timeout) if config_request_timeout else REQUEST_TIMEOUT
+        
+        # Prepare authentication
+        if 'client_id' in config and 'client_secret' in config:
+            # Use Basic Auth with client_id and client_secret
+            import base64
+            auth_string = f"{config['client_id']}:{config['client_secret']}"
+            encoded = base64.b64encode(auth_string.encode()).decode()
+            self.auth_header = f"Basic {encoded}"
+        elif 'api_access' in config:
+            # Use provided api_access (Bearer token or Basic auth)
+            self.auth_header = config['api_access']
+        else:
+            LOGGER.warning("No authentication credentials found in config")
 
     def __enter__(self):
         self.check_api_credentials()
@@ -64,7 +77,8 @@ class Client:
 
     def authenticate(self, headers: Dict, params: Dict) -> Tuple[Dict, Dict]:
         """Authenticates the request with the token"""
-        headers["Authorization"] = self.config["api_access"]
+        if hasattr(self, 'auth_header'):
+            headers["Authorization"] = self.auth_header
         return headers, params
 
     def make_request(
@@ -82,7 +96,7 @@ class Client:
         params = params or {}
         headers = headers or {}
         body = body or {}
-        endpoint = endpoint or f"{self.base_url}/{path}"
+        endpoint = endpoint or f"{self.base_url}{path}"
         headers, params = self.authenticate(headers, params)
         return self.__make_request(
             method, endpoint,
@@ -91,6 +105,14 @@ class Client:
             data=body,
             timeout=self.request_timeout
         )
+
+    def get(self, endpoint: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None) -> Any:
+        """Convenience method for GET requests."""
+        return self.make_request("GET", endpoint, params=params, headers=headers)
+
+    def post(self, endpoint: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None, body: Optional[Dict[str, Any]] = None) -> Any:
+        """Convenience method for POST requests."""
+        return self.make_request("POST", endpoint, params=params, headers=headers, body=body)
 
     @backoff.on_exception(
         wait_gen=backoff.expo,

@@ -132,3 +132,63 @@ class TestClient(unittest.TestCase):
                 self.client._Client__make_request("GET", "https://api.example.com/resource")
             
             self.assertEqual(mock_request.call_count, 5)
+
+    def test_client_get_method(self):
+        """Test client get() convenience method."""
+        with patch.object(self.client, 'make_request', return_value={"data": "success"}) as mock_make_request:
+            result = self.client.get("https://api.example.com/resource", params={"limit": 10})
+            
+            mock_make_request.assert_called_once_with(
+                "GET", 
+                "https://api.example.com/resource", 
+                params={"limit": 10}, 
+                headers=None
+            )
+            self.assertEqual(result, {"data": "success"})
+
+    def test_client_post_method(self):
+        """Test client post() convenience method."""
+        with patch.object(self.client, 'make_request', return_value={"created": True}) as mock_make_request:
+            result = self.client.post(
+                "https://api.example.com/resource", 
+                params={"param": "value"},
+                body={"name": "test"}
+            )
+            
+            mock_make_request.assert_called_once_with(
+                "POST", 
+                "https://api.example.com/resource", 
+                params={"param": "value"}, 
+                headers=None,
+                body={"name": "test"}
+            )
+            self.assertEqual(result, {"created": True})
+
+    def test_make_request_with_path_parameter(self):
+        """Test make_request correctly constructs endpoint from path."""
+        mock_response = MockResponse(200, text={"data": "ok"})
+        
+        with patch.object(self.client._session, "request", return_value=mock_response):
+            result = self.client.make_request("GET", None, path="/v3/REST/message")
+            
+            # Verify the constructed endpoint
+            call_args = self.client._session.request.call_args
+            self.assertEqual(call_args[0][1], "https://api.mailjet.com/v3/REST/message")
+            self.assertEqual(result, {"data": "ok"})
+
+    def test_make_request_get_removes_body(self):
+        """Test that GET requests do not send a body parameter."""
+        mock_response = MockResponse(200, text={"data": "ok"})
+        
+        with patch.object(self.client._session, "request", return_value=mock_response) as mock_request:
+            result = self.client.make_request(
+                "GET", 
+                "https://api.example.com/resource", 
+                body={"should": "not_be_sent"}
+            )
+            
+            # Verify body/data was removed for GET request
+            call_kwargs = mock_request.call_args[1]
+            self.assertNotIn("data", call_kwargs)
+            self.assertEqual(result, {"data": "ok"})
+

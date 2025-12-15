@@ -26,16 +26,16 @@ class BaseStream(ABC):
      - `sync` and `get_records` method for performing sync
     """
 
-    url_endpoint = ""
+    url_endpoint = "https://api.mailjet.com"
     path = ""
-    page_size = 100
-    next_page_key = ""
+    page_size = 1000
+    next_page_key = "Offset"
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
     children = []
     parent = ""
-    data_key = ""
+    data_key = "Data"
     parent_bookmark_key = ""
-    http_method = "POST"
+    http_method = "GET"
 
     def __init__(self, client=None, catalog=None) -> None:
         self.client = client
@@ -98,24 +98,31 @@ class BaseStream(ABC):
 
     def get_records(self) -> Iterator:
         """Interacts with api client interaction and pagination."""
-        self.params[
-            ""
-        ] = self.page_size
-        next_page = 1
-        while next_page:
+        self.params["Limit"] = self.page_size
+        self.params["Offset"] = 0
+        
+        while True:
             response = self.client.make_request(
                 self.http_method,
-                self.url_endpoint,
+                None,  # Let the client construct URL from path
                 self.params,
                 self.headers,
-                body=json.dumps(self.data_payload),
+                body=json.dumps(self.data_payload) if self.data_payload else None,
                 path=self.path,
             )
             raw_records = response.get(self.data_key, [])
-            next_page = response.get(self.next_page_key)
-
-            self.params[self.next_page_key] = next_page
+            
+            if not raw_records:
+                break
+                
             yield from raw_records
+            
+            # Mailjet pagination: if we get fewer records than the limit, we're done
+            if len(raw_records) < self.page_size:
+                break
+                
+            # Move to next page
+            self.params["Offset"] += self.page_size
 
     def write_schema(self) -> None:
         """
@@ -151,7 +158,7 @@ class BaseStream(ABC):
         """
         Get the URL endpoint for the stream
         """
-        return self.url_endpoint or f"{self.client.base_url}/{self.path}"
+        return f"{self.client.base_url}{self.path}"
 
 
 class IncrementalStream(BaseStream):
@@ -194,7 +201,8 @@ class IncrementalStream(BaseStream):
         bookmark_date = self.get_bookmark(state, self.tap_stream_id)
         current_max_bookmark_date = bookmark_date
         self.update_params(updated_since=bookmark_date)
-        self.update_data_payload(parent_obj)
+        if parent_obj:
+            self.update_data_payload(**parent_obj)
         self.url_endpoint = self.get_url_endpoint(parent_obj)
 
         with metrics.record_counter(self.tap_stream_id) as counter:
@@ -238,7 +246,8 @@ class FullTableStream(BaseStream):
     ) -> Dict:
         """Abstract implementation for `type: Fulltable` stream."""
         self.url_endpoint = self.get_url_endpoint(parent_obj)
-        self.update_data_payload(parent_obj)
+        if parent_obj:
+            self.update_data_payload(**parent_obj)
         with metrics.record_counter(self.tap_stream_id) as counter:
             for record in self.get_records():
                 transformed_record = transformer.transform(
