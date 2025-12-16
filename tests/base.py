@@ -36,7 +36,7 @@ class mailjetBaseTest(BaseCase):
             "messages": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: { "A, r, r, i, v, e, d, A, t" },
+                cls.REPLICATION_KEYS: { "ArrivedAt" },
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100
             },
@@ -64,7 +64,7 @@ class mailjetBaseTest(BaseCase):
             "campaigns": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: { "C, r, e, a, t, e, d, A, t" },
+                cls.REPLICATION_KEYS: { "CreatedAt" },
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100
             },
@@ -76,11 +76,11 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 100
             },
             "message_information": {
-                cls.PRIMARY_KEYS: { "ID" },
-                cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: { "C, r, e, a, t, e, d, A, t" },
-                cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+            cls.PRIMARY_KEYS: { "ID" },
+            cls.REPLICATION_METHOD: cls.INCREMENTAL,
+            cls.REPLICATION_KEYS: { "CreatedAt" },
+            cls.OBEYS_START_DATE: False,
+            cls.API_LIMIT: 100
             },
             "geo_statistics": {
                 cls.PRIMARY_KEYS: { "ID" },
@@ -92,7 +92,7 @@ class mailjetBaseTest(BaseCase):
             "click_statistics": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: { "C, l, i, c, k, e, d, A, t" },
+                cls.REPLICATION_KEYS: { "ClickedAt" },
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100
             },
