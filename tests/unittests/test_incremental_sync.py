@@ -93,9 +93,9 @@ class TestIncrementalBookmark(unittest.TestCase):
         mock_get_bookmark.return_value = "2025-01-01T00:00:00Z"
         mock_write_bookmark.return_value = {}
         
-        # Generate 250 records
+        # Generate 250 records with valid dates (spread across days)
         mock_records = [
-            {"ID": i, "ArrivedAt": f"2025-01-{i//10 + 1:02d}T00:00:00Z"}
+            {"ID": i, "ArrivedAt": f"2025-01-01T{i//10:02d}:{i%10*6:02d}:00Z"}
             for i in range(1, 251)
         ]
         

@@ -101,7 +101,8 @@ class BaseStream(ABC):
         """Interacts with api client interaction and pagination."""
         self.params["Limit"] = self.page_size
         next_page = 1
-        while next_page:
+        if "Offset" not in self.params:
+            self.params["Offset"] = 0
             response = self.client.make_request(
                 self.http_method,
                 self.url_endpoint,
@@ -169,8 +170,13 @@ class IncrementalStream(BaseStream):
 
 
     def get_bookmark(self, state: dict, stream: str, key: Any = None) -> str:
-        """A wrapper for singer.get_bookmark to deal with compatibility for
-        bookmark values or start values."""
+        """
+        A wrapper for singer.get_bookmark to deal with compatibility for
+        bookmark values or start values.
+        Returns:
+            str: The bookmark value as a string. The format is typically an ISO 8601 datetime string,
+            as expected by the Mailjet API and the tap configuration.
+        """
         replication_key = key or (self.replication_keys[0] if isinstance(self.replication_keys, list) else self.replication_keys)
         return get_bookmark(
             state,
