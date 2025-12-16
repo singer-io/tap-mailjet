@@ -50,7 +50,8 @@ class Client:
         self._session = session()
         self.base_url = "https://api.mailjet.com/v3/REST"
         config_request_timeout = config.get("request_timeout")
-        if config_request_timeout is None:
+        # Treat None, empty string, or 0 as default timeout
+        if config_request_timeout is None or config_request_timeout == "" or config_request_timeout == 0:
             self.request_timeout = REQUEST_TIMEOUT
         else:
             try:
