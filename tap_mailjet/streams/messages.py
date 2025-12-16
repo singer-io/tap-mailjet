@@ -4,7 +4,13 @@ class Messages(IncrementalStream):
     tap_stream_id = "messages"
     key_properties = ["ID"]
     replication_method = "INCREMENTAL"
-    replication_keys = "ArrivedAt"
+    replication_keys = ["ArrivedAt"]
     data_key = "Data"
     path = "message"
+    
+    def set_incremental_params(self, bookmark_date: str) -> None:
+        """Set FromTS parameter for Messages stream"""
+        # Mailjet API uses FromTS and ToTS for filtering messages
+        # FromTS is the minimum timestamp (inclusive)
+        self.update_params(FromTS=bookmark_date)
 

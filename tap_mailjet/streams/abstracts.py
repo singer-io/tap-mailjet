@@ -35,7 +35,7 @@ class BaseStream(ABC):
     parent = ""
     data_key = ""
     parent_bookmark_key = ""
-    http_method = "POST"
+    http_method = "GET"
 
     def __init__(self, client=None, catalog=None) -> None:
         self.client = client
@@ -99,9 +99,15 @@ class BaseStream(ABC):
 
     def get_records(self) -> Iterator:
         """Interacts with api client interaction and pagination."""
-        self.params[""] = self.page_size
-        next_page = 1
-        while next_page:
+        # Set pagination parameters
+        self.params["Limit"] = self.page_size
+        self.params["Offset"] = 0
+        
+        max_pages = 10000  # Safety limit
+        current_page = 0
+        has_more_data = True
+        
+        while has_more_data and current_page < max_pages:
             response = self.client.make_request(
                 self.http_method,
                 self.url_endpoint,
@@ -111,10 +117,21 @@ class BaseStream(ABC):
                 path=self.path
             )
             raw_records = response.get(self.data_key, [])
-            next_page = response.get(self.next_page_key)
-
-            self.params[self.next_page_key] = next_page
+            
+            # Exit if no records returned
+            if not raw_records:
+                has_more_data = False
+                break
+            
             yield from raw_records
+            
+            # Check if we got fewer records than page_size (last page)
+            if len(raw_records) < self.page_size:
+                has_more_data = False
+            else:
+                # Move to next page
+                current_page += 1
+                self.params["Offset"] = current_page * self.page_size
 
     def write_schema(self) -> None:
         """
@@ -157,13 +174,14 @@ class IncrementalStream(BaseStream):
     """Base Class for Incremental Stream."""
 
 
-    def get_bookmark(self, state: dict, stream: str, key: Any = None) -> int:
+    def get_bookmark(self, state: dict, stream: str, key: Any = None) -> str:
         """A wrapper for singer.get_bookmark to deal with compatibility for
         bookmark values or start values."""
+        replication_key = key or (self.replication_keys[0] if isinstance(self.replication_keys, list) else self.replication_keys)
         return get_bookmark(
             state,
             stream,
-            key or self.replication_keys[0],
+            replication_key,
             self.client.config["start_date"],
         )
 
@@ -173,11 +191,18 @@ class IncrementalStream(BaseStream):
         if not (key or self.replication_keys):
             return state
 
-        current_bookmark = get_bookmark(state, stream, key or self.replication_keys[0], self.client.config["start_date"])
+        replication_key = key or (self.replication_keys[0] if isinstance(self.replication_keys, list) else self.replication_keys)
+        current_bookmark = get_bookmark(state, stream, replication_key, self.client.config["start_date"])
         value = max(current_bookmark, value)
         return write_bookmark(
-            state, stream, key or self.replication_keys[0], value
+            state, stream, replication_key, value
         )
+    
+    def set_incremental_params(self, bookmark_date: str) -> None:
+        """Set API parameters for incremental sync. Override in subclass if needed."""
+        # Default: use FromTS parameter for date filtering
+        # Specific streams can override this method for custom parameters
+        pass
 
 
     def sync(
@@ -189,37 +214,56 @@ class IncrementalStream(BaseStream):
         """Implementation for `type: Incremental` stream."""
         bookmark_date = self.get_bookmark(state, self.tap_stream_id)
         current_max_bookmark_date = bookmark_date
-        self.update_params(updated_since=bookmark_date)
+        
+        # Set incremental filtering parameters
+        self.set_incremental_params(bookmark_date)
         self.update_data_payload(**(parent_obj or {}))
         self.url_endpoint = self.get_url_endpoint(parent_obj)
 
+        batch_size = 100
+        records_since_last_bookmark = 0
+        
         with metrics.record_counter(self.tap_stream_id) as counter:
             for record in self.get_records():
-                record = self.modify_object(record, parent_obj)
-                # pylint: disable=too-many-function-args
-                transformed_record = transformer.transform(
-                    record, self.schema, self.metadata
-                )
+                try:
+                    record = self.modify_object(record, parent_obj)
+                    # pylint: disable=too-many-function-args
+                    transformed_record = transformer.transform(
+                        record, self.schema, self.metadata
+                    )
+                except Exception as err:
+                    LOGGER.error(f"Failed to transform record in {self.tap_stream_id}: {record.get('ID', 'unknown')}, Error: {err}")
+                    raise
 
-                record_bookmark = transformed_record[self.replication_keys[0]]
-                if record_bookmark >= bookmark_date:
+                replication_key = self.replication_keys[0] if isinstance(self.replication_keys, list) else self.replication_keys
+                record_bookmark = transformed_record.get(replication_key)
+                
+                if record_bookmark and record_bookmark >= bookmark_date:
                     if self.is_selected():
                         write_record(self.tap_stream_id, transformed_record)
                         counter.increment()
 
-                    current_max_bookmark_date = max(
-                        current_max_bookmark_date, record_bookmark
-                    )
+                    if record_bookmark:
+                        current_max_bookmark_date = max(
+                            current_max_bookmark_date, record_bookmark
+                        )
 
                     for child in self.child_to_sync:
                         child.sync(state=state, transformer=transformer, parent_obj=record)
+                    
+                    # Write state after every batch
+                    records_since_last_bookmark += 1
+                    if records_since_last_bookmark >= batch_size:
+                        state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
+                        records_since_last_bookmark = 0
 
+            # Write final bookmark
             state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
             return counter.value
 
 
 class FullTableStream(BaseStream):
-    """Base Class for Incremental Stream."""
+    """Base Class for Full Table Stream."""
 
     replication_keys = []
 
@@ -234,10 +278,15 @@ class FullTableStream(BaseStream):
         self.update_data_payload(**(parent_obj or {}))
         with metrics.record_counter(self.tap_stream_id) as counter:
             for record in self.get_records():
-                # pylint: disable=too-many-function-args
-                transformed_record = transformer.transform(
-                    record, self.schema, self.metadata
-                )
+                try:
+                    # pylint: disable=too-many-function-args
+                    transformed_record = transformer.transform(
+                        record, self.schema, self.metadata
+                    )
+                except Exception as err:
+                    LOGGER.error(f"Failed to transform record in {self.tap_stream_id}: {record.get('ID', 'unknown')}, Error: {err}")
+                    raise
+                    
                 if self.is_selected():
                     write_record(self.tap_stream_id, transformed_record)
                     counter.increment()
