@@ -100,9 +100,14 @@ class BaseStream(ABC):
     def get_records(self) -> Iterator:
         """Interacts with api client interaction and pagination."""
         self.params["Limit"] = self.page_size
-        next_page = 1
+        current_page = 0
+        has_more_data = True
+        max_pages = 10000  # Safety limit to prevent infinite loops
+        
         if "Offset" not in self.params:
             self.params["Offset"] = 0
+        
+        while has_more_data and current_page < max_pages:
             response = self.client.make_request(
                 self.http_method,
                 self.url_endpoint,
