@@ -1,12 +1,6 @@
 {
     "type": "object",
     "properties": {
-        "ID": {
-            "type": [
-                "integer",
-                "null"
-            ]
-        },
         "ClickedCount": {
             "type": [
                 "integer",
