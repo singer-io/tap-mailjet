@@ -1,8 +1,89 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from tap_mailjet.sync import write_schema, sync, update_currently_syncing
+from unittest.mock import patch, MagicMock, call
+from tap_mailjet.sync import sync, update_currently_syncing, write_schema
+from singer import Catalog, CatalogEntry, Schema, metadata as singer_metadata
 
 class TestSync(unittest.TestCase):
+    """Test cases for sync functionality."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.config = {
+            'api_key': 'test_key',
+            'api_secret': 'test_secret',
+            'start_date': '2024-01-01T00:00:00Z'
+        }
+        self.state = {}
+
+    @patch('tap_mailjet.sync.sync_stream')
+    @patch('tap_mailjet.streams.Messages')
+    @patch('tap_mailjet.streams.MessageInformation')
+    def test_sync_child_selected(self, mock_message_info_class, mock_messages_class, mock_sync_stream):
+        """Test sync when child stream is selected."""
+        # Create mock stream instances
+        mock_messages_instance = MagicMock()
+        mock_messages_instance.tap_stream_id = 'messages'
+        mock_messages_instance.is_selected.return_value = True
+        mock_messages_class.return_value = mock_messages_instance
+        
+        mock_message_info_instance = MagicMock()
+        mock_message_info_instance.tap_stream_id = 'message_information'
+        mock_message_info_instance.parent = 'messages'
+        mock_message_info_instance.is_selected.return_value = True
+        mock_message_info_class.return_value = mock_message_info_instance
+        
+        # Create mock schema
+        schema_dict = {
+            'type': 'object',
+            'properties': {
+                'ID': {'type': 'integer'},
+                'ArrivedAt': {'type': ['null', 'string'], 'format': 'date-time'}
+            }
+        }
+        
+        # Create catalog with parent and child streams
+        parent_metadata = singer_metadata.get_standard_metadata(
+            schema=schema_dict,
+            key_properties=['ID'],
+            replication_method='INCREMENTAL',
+            valid_replication_keys=['ArrivedAt']
+        )
+        parent_metadata = singer_metadata.to_list(parent_metadata)
+        parent_metadata[0]['metadata']['selected'] = True
+        
+        parent_stream = CatalogEntry(
+            tap_stream_id='messages',
+            stream='messages',
+            schema=Schema.from_dict(schema_dict),
+            key_properties=['ID'],
+            metadata=parent_metadata
+        )
+        
+        child_metadata = singer_metadata.get_standard_metadata(
+            schema=schema_dict,
+            key_properties=['ID'],
+            replication_method='INCREMENTAL',
+            valid_replication_keys=['ArrivedAt']
+        )
+        child_metadata = singer_metadata.to_list(child_metadata)
+        child_metadata[0]['metadata']['selected'] = True
+        
+        child_stream = CatalogEntry(
+            tap_stream_id='message_information',
+            stream='message_information',
+            schema=Schema.from_dict(schema_dict),
+            key_properties=['ID'],
+            metadata=child_metadata
+        )
+        
+        catalog = Catalog(streams=[parent_stream, child_stream])
+        
+        # Run sync
+        sync.sync(self.config, self.state, catalog)
+        
+        # Verify sync_stream was called
+        # The actual number of calls depends on implementation
+        self.assertGreaterEqual(mock_sync_stream.call_count, 1)
 
     def test_write_schema_only_parent_selected(self):
         mock_stream = MagicMock()
@@ -139,4 +220,4 @@ class TestSync(unittest.TestCase):
         mock_get_currently_syncing.assert_not_called()
         mock_set_currently_syncing.assert_called_once_with(state, "new_stream")
         mock_write_state.assert_called_once_with(state)
-        self.assertNotIn("currently_syncing", state) 
+        self.assertNotIn("currently_syncing", state)

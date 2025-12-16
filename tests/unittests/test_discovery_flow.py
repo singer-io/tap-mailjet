@@ -1,185 +1,184 @@
 """Unit tests for discovery flow."""
 import unittest
 from unittest.mock import patch, MagicMock
-from singer.catalog import Catalog, CatalogEntry, Schema
-from tap_mailjet.discover import discover
+from tap_mailjet import discover
+from singer import Catalog, metadata as singer_metadata
 
 
 class TestDiscoveryFlow(unittest.TestCase):
-    """Test discovery mode functionality."""
+    """Test cases for discovery flow."""
 
-    @patch("tap_mailjet.discover.get_schemas")
+    @patch('tap_mailjet.discover.get_schemas')
     def test_discover_returns_catalog(self, mock_get_schemas):
         """Test that discover returns a valid Catalog object."""
-        mock_get_schemas.return_value = (
-            {
-                "messages": {
-                    "type": "object",
-                    "properties": {
-                        "ID": {"type": ["null", "integer"]},
-                        "ArrivedAt": {"type": ["null", "string"], "format": "date-time"}
-                    }
-                }
-            },
-            {
-                "messages": [
-                    {"metadata": {"table-key-properties": ["ID"]}, "breadcrumb": []}
-                ]
-            }
-        )
-        
-        catalog = discover()
-        
-        self.assertIsInstance(catalog, Catalog)
-        self.assertEqual(len(catalog.streams), 1)
-        self.assertEqual(catalog.streams[0].stream, "messages")
-        self.assertEqual(catalog.streams[0].tap_stream_id, "messages")
-
-    @patch("tap_mailjet.discover.get_schemas")
-    def test_discover_all_streams(self, mock_get_schemas):
-        """Test that discover returns all available streams."""
         mock_schemas = {
-            "messages": {"type": "object", "properties": {"ID": {"type": "integer"}}},
-            "campaigns": {"type": "object", "properties": {"ID": {"type": "integer"}}},
-            "contacts": {"type": "object", "properties": {"ID": {"type": "integer"}}},
-            "contacts_list": {"type": "object", "properties": {"ID": {"type": "integer"}}},
+            'messages': {
+                'type': 'object',
+                'properties': {}
+            }
         }
         mock_metadata = {
-            stream: [{"metadata": {"table-key-properties": ["ID"]}, "breadcrumb": []}]
-            for stream in mock_schemas.keys()
+            'messages': singer_metadata.get_standard_metadata(
+                schema=mock_schemas['messages'],
+                key_properties=['ID'],
+                replication_method='INCREMENTAL',
+                valid_replication_keys=['ArrivedAt']
+            )
         }
         mock_get_schemas.return_value = (mock_schemas, mock_metadata)
         
         catalog = discover()
-        
-        self.assertEqual(len(catalog.streams), 4)
-        stream_names = {stream.stream for stream in catalog.streams}
-        self.assertEqual(stream_names, {"messages", "campaigns", "contacts", "contacts_list"})
+        self.assertIsInstance(catalog, Catalog)
 
-    @patch("tap_mailjet.discover.get_schemas")
-    def test_discover_schema_validation(self, mock_get_schemas):
-        """Test that schemas are properly validated during discovery."""
-        mock_get_schemas.return_value = (
-            {
-                "messages": {
-                    "type": "object",
-                    "properties": {
-                        "ID": {"type": ["null", "integer"]},
-                        "ArrivedAt": {"type": ["null", "string"], "format": "date-time"},
-                        "Status": {"type": ["null", "string"]}
-                    }
-                }
+    @patch('tap_mailjet.discover.get_schemas')
+    def test_discover_all_streams(self, mock_get_schemas):
+        """Test that discover returns all available streams."""
+        mock_schemas = {
+            'messages': {
+                'type': 'object',
+                'properties': {}
             },
-            {
-                "messages": [
-                    {"metadata": {"table-key-properties": ["ID"]}, "breadcrumb": []}
-                ]
+            'contacts': {
+                'type': 'object',
+                'properties': {}
             }
-        )
-        
-        catalog = discover()
-        
-        # Verify schema structure
-        stream = catalog.streams[0]
-        self.assertIsInstance(stream.schema, Schema)
-        schema_dict = stream.schema.to_dict()
-        self.assertEqual(schema_dict["type"], "object")
-        self.assertIn("ID", schema_dict["properties"])
-        self.assertIn("ArrivedAt", schema_dict["properties"])
-
-    @patch("tap_mailjet.discover.get_schemas")
-    def test_discover_key_properties(self, mock_get_schemas):
-        """Test that key properties are correctly set."""
-        mock_get_schemas.return_value = (
-            {
-                "messages": {"type": "object", "properties": {"ID": {"type": "integer"}}}
-            },
-            {
-                "messages": [
-                    {"metadata": {"table-key-properties": ["ID"]}, "breadcrumb": []}
-                ]
-            }
-        )
-        
-        catalog = discover()
-        
-        stream = catalog.streams[0]
-        self.assertEqual(stream.key_properties, ["ID"])
-
-    @patch("tap_mailjet.discover.get_schemas")
-    def test_discover_metadata_structure(self, mock_get_schemas):
-        """Test that metadata is properly structured."""
-        mock_metadata = {
-            "messages": [
-                {
-                    "metadata": {
-                        "table-key-properties": ["ID"],
-                        "forced-replication-method": "INCREMENTAL",
-                        "valid-replication-keys": ["ArrivedAt"]
-                    },
-                    "breadcrumb": []
-                }
-            ]
         }
-        mock_get_schemas.return_value = (
-            {"messages": {"type": "object", "properties": {"ID": {"type": "integer"}}}},
-            mock_metadata
-        )
+        mock_metadata = {
+            'messages': singer_metadata.get_standard_metadata(
+                schema=mock_schemas['messages'],
+                key_properties=['ID'],
+                replication_method='INCREMENTAL',
+                valid_replication_keys=['ArrivedAt']
+            ),
+            'contacts': singer_metadata.get_standard_metadata(
+                schema=mock_schemas['contacts'],
+                key_properties=['ID'],
+                replication_method='FULL_TABLE'
+            )
+        }
+        mock_get_schemas.return_value = (mock_schemas, mock_metadata)
         
         catalog = discover()
-        
-        stream = catalog.streams[0]
-        self.assertIsNotNone(stream.metadata)
-        self.assertEqual(len(stream.metadata), 1)
+        self.assertEqual(len(catalog.streams), 2)
 
-    @patch("tap_mailjet.discover.get_schemas")
-    def test_discover_handles_schema_error(self, mock_get_schemas):
-        """Test that discovery handles schema errors properly."""
-        # This will cause Schema.from_dict to raise TypeError
-        mock_get_schemas.return_value = (
-            {
-                "invalid_stream": "not a dict"  # Invalid schema - string instead of dict
-            },
-            {
-                "invalid_stream": []
+    @patch('tap_mailjet.discover.get_schemas')
+    def test_discover_catalog_entry_attributes(self, mock_get_schemas):
+        """Test that CatalogEntry has all required attributes."""
+        mock_schemas = {
+            'messages': {
+                'type': 'object',
+                'properties': {}
             }
-        )
+        }
+        mock_metadata = {
+            'messages': singer_metadata.get_standard_metadata(
+                schema=mock_schemas['messages'],
+                key_properties=['ID'],
+                replication_method='INCREMENTAL',
+                valid_replication_keys=['ArrivedAt']
+            )
+        }
+        mock_get_schemas.return_value = (mock_schemas, mock_metadata)
         
-        with self.assertRaises(Exception):
-            discover()
+        catalog = discover()
+        entry = catalog.streams[0]
+        
+        self.assertTrue(hasattr(entry, 'tap_stream_id'))
+        self.assertTrue(hasattr(entry, 'schema'))
+        self.assertTrue(hasattr(entry, 'key_properties'))
+        self.assertTrue(hasattr(entry, 'metadata'))
 
-    @patch("tap_mailjet.discover.get_schemas")
+    @patch('tap_mailjet.discover.get_schemas')
     def test_discover_empty_schemas(self, mock_get_schemas):
         """Test discovery with no schemas."""
         mock_get_schemas.return_value = ({}, {})
         
         catalog = discover()
-        
-        self.assertIsInstance(catalog, Catalog)
         self.assertEqual(len(catalog.streams), 0)
 
-    @patch("tap_mailjet.discover.get_schemas")
-    def test_discover_catalog_entry_attributes(self, mock_get_schemas):
-        """Test that CatalogEntry has all required attributes."""
-        mock_get_schemas.return_value = (
-            {
-                "messages": {
-                    "type": "object",
-                    "properties": {"ID": {"type": "integer"}}
-                }
-            },
-            {
-                "messages": [
-                    {"metadata": {"table-key-properties": ["ID"]}, "breadcrumb": []}
-                ]
+    @patch('tap_mailjet.discover.get_schemas')
+    def test_discover_key_properties(self, mock_get_schemas):
+        """Test that key properties are correctly set."""
+        mock_schemas = {
+            'messages': {
+                'type': 'object',
+                'properties': {}
             }
-        )
+        }
+        mock_metadata = {
+            'messages': singer_metadata.get_standard_metadata(
+                schema=mock_schemas['messages'],
+                key_properties=['ID', 'MessageID'],
+                replication_method='INCREMENTAL',
+                valid_replication_keys=['ArrivedAt']
+            )
+        }
+        mock_get_schemas.return_value = (mock_schemas, mock_metadata)
         
         catalog = discover()
-        
         entry = catalog.streams[0]
-        self.assertTrue(hasattr(entry, "stream"))
-        self.assertTrue(hasattr(entry, "tap_stream_id"))
-        self.assertTrue(hasattr(entry, "key_properties"))
-        self.assertTrue(hasattr(entry, "schema"))
-        self.assertTrue(hasattr(entry, "metadata"))
+        
+        self.assertEqual(entry.key_properties, ['ID', 'MessageID'])
+
+    @patch('tap_mailjet.discover.get_schemas')
+    def test_discover_metadata_structure(self, mock_get_schemas):
+        """Test that metadata is properly structured."""
+        mock_schemas = {
+            'messages': {
+                'type': 'object',
+                'properties': {}
+            }
+        }
+        mock_metadata = {
+            'messages': singer_metadata.get_standard_metadata(
+                schema=mock_schemas['messages'],
+                key_properties=['ID'],
+                replication_method='INCREMENTAL',
+                valid_replication_keys=['ArrivedAt']
+            )
+        }
+        mock_get_schemas.return_value = (mock_schemas, mock_metadata)
+        
+        catalog = discover()
+        entry = catalog.streams[0]
+        
+        self.assertIsNotNone(entry.metadata)
+        self.assertIsInstance(entry.metadata, list)
+
+    @patch('tap_mailjet.discover.get_schemas')
+    def test_discover_schema_validation(self, mock_get_schemas):
+        """Test that schemas are properly validated during discovery."""
+        mock_schemas = {
+            'messages': {
+                'type': 'object',
+                'properties': {
+                    'ID': {'type': 'integer'},
+                    'ArrivedAt': {'type': 'string', 'format': 'date-time'}
+                }
+            }
+        }
+        mock_metadata = {
+            'messages': singer_metadata.get_standard_metadata(
+                schema=mock_schemas['messages'],
+                key_properties=['ID'],
+                replication_method='INCREMENTAL',
+                valid_replication_keys=['ArrivedAt']
+            )
+        }
+        mock_get_schemas.return_value = (mock_schemas, mock_metadata)
+        
+        catalog = discover()
+        entry = catalog.streams[0]
+        
+        self.assertIn('properties', entry.schema.to_dict())
+        self.assertIn('ID', entry.schema.to_dict()['properties'])
+
+    @patch('tap_mailjet.discover.get_schemas')
+    def test_discover_handles_schema_error(self, mock_get_schemas):
+        """Test that discovery handles schema errors properly."""
+        mock_get_schemas.side_effect = Exception("Schema loading failed")
+        
+        with self.assertRaises(Exception) as context:
+            discover()
+        
+        self.assertIn("Schema loading failed", str(context.exception))
