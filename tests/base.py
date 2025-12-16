@@ -83,7 +83,7 @@ class mailjetBaseTest(BaseCase):
             cls.API_LIMIT: 100
             },
             "geo_statistics": {
-                cls.PRIMARY_KEYS: { "ID" },
+                cls.PRIMARY_KEYS: set(),
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
@@ -97,7 +97,7 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 100
             },
             "top_link_clicked": {
-                cls.PRIMARY_KEYS: { "ID" },
+                cls.PRIMARY_KEYS: { "LinkId" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
