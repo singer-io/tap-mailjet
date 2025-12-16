@@ -12,7 +12,16 @@ class mailjetStartDateTest(StartDateTest, mailjetBaseTest):
         return "tap_tester_mailjet_start_date_test"
 
     def streams_to_test(self):
-        streams_to_exclude = {}
+        streams_to_exclude = {
+            # Unsupported Full-Table Streams
+            'contacts',
+            'contacts_list',
+            'list_recipient',
+            'template',
+            'geo_statistics',
+            'top_link_clicked',
+            'campaign_overview'
+        }
         return self.expected_stream_names().difference(streams_to_exclude)
 
     @property
