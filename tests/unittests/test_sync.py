@@ -94,24 +94,19 @@ class TestSync(unittest.TestCase):
         config = {}
 
         # Mock the STREAMS dictionary to return stream instances with parent relationship
-        with patch("tap_mailjet.sync.STREAMS") as mock_streams:
-            parent_stream_instance = MagicMock()
-            parent_stream_instance.parent = ""
-            parent_stream_instance.sync.return_value = 0
-            
-            child_stream_instance = MagicMock()
-            child_stream_instance.parent = "contacts"
-            
-            def create_stream(name):
-                def factory(client, catalog_stream):
-                    if name == "contacts":
-                        return parent_stream_instance
-                    elif name == "list_recipient":
-                        return child_stream_instance
-                return factory
-            
-            mock_streams.__getitem__.side_effect = lambda name: create_stream(name)
-            
+        parent_stream_instance = MagicMock()
+        parent_stream_instance.parent = ""
+        parent_stream_instance.sync.return_value = 0
+        
+        child_stream_instance = MagicMock()
+        child_stream_instance.parent = "contacts"
+        
+        mock_streams_dict = {
+            "contacts": MagicMock(return_value=parent_stream_instance),
+            "list_recipient": MagicMock(return_value=child_stream_instance),
+        }
+        
+        with patch.dict("tap_mailjet.sync.STREAMS", mock_streams_dict, clear=False):
             sync(client, config, mock_catalog, state)
 
             # Only parent stream should be synced, child is skipped due to parent relationship
