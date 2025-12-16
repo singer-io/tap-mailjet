@@ -7,7 +7,7 @@ class TestSync(unittest.TestCase):
     def test_write_schema_only_parent_selected(self):
         mock_stream = MagicMock()
         mock_stream.is_selected.return_value = True
-        mock_stream.children = ["invoice_payments", "invoice_line_items"]
+        mock_stream.children = ["list_recipient", "template"]
         mock_stream.child_to_sync = []
 
         client = MagicMock()
@@ -22,14 +22,14 @@ class TestSync(unittest.TestCase):
     def test_write_schema_parent_child_both_selected(self):
         mock_stream = MagicMock()
         mock_stream.is_selected.return_value = True
-        mock_stream.children = ["invoice_payments", "invoice_line_items"]
+        mock_stream.children = ["list_recipient", "template"]
         mock_stream.child_to_sync = []
 
         client = MagicMock()
         catalog = MagicMock()
         catalog.get_stream.return_value = MagicMock()
 
-        write_schema(mock_stream, client, ["invoice_payments"], catalog)
+        write_schema(mock_stream, client, ["list_recipient"], catalog)
 
         mock_stream.write_schema.assert_called_once()
         self.assertEqual(len(mock_stream.child_to_sync), 1)
@@ -37,14 +37,14 @@ class TestSync(unittest.TestCase):
     def test_write_schema_child_selected(self):
         mock_stream = MagicMock()
         mock_stream.is_selected.return_value = False
-        mock_stream.children = ["invoice_payments", "invoice_line_items"]
+        mock_stream.children = ["list_recipient", "template"]
         mock_stream.child_to_sync = []
 
         client = MagicMock()
         catalog = MagicMock()
         catalog.get_stream.return_value = MagicMock()
 
-        write_schema(mock_stream, client, ["invoice_payments", "invoice_line_items"], catalog)
+        write_schema(mock_stream, client, ["list_recipient", "template"], catalog)
 
         self.assertEqual(mock_stream.write_schema.call_count, 0)
         self.assertEqual(len(mock_stream.child_to_sync), 2)
@@ -56,13 +56,13 @@ class TestSync(unittest.TestCase):
     @patch("tap_mailjet.streams.abstracts.IncrementalStream.sync")
     def test_sync_stream1_called(self, mock_sync, mock_write_state, mock_transformer, mock_get_currently_syncing, mock_write_schema):
         mock_catalog = MagicMock()
-        invoice_stream = MagicMock()
-        invoice_stream.stream = "invoices"
-        expense_stream = MagicMock()
-        expense_stream.stream = "expenses"
+        campaigns_stream = MagicMock()
+        campaigns_stream.stream = "campaigns"
+        messages_stream = MagicMock()
+        messages_stream.stream = "messages"
         mock_catalog.get_selected_streams.return_value = [
-            invoice_stream,
-            expense_stream
+            campaigns_stream,
+            messages_stream
         ]
         state = {}
 
@@ -77,25 +77,46 @@ class TestSync(unittest.TestCase):
     @patch("singer.get_currently_syncing")
     @patch("singer.Transformer")
     @patch("singer.write_state")
-    @patch("tap_mailjet.streams.abstracts.IncrementalStream.sync")
-    def test_sync_child_selected(self, mock_sync, mock_write_state, mock_transformer, mock_get_currently_syncing, mock_write_schema):
+    def test_sync_child_selected(self, mock_write_state, mock_transformer, mock_get_currently_syncing, mock_write_schema):
+        # Create a mock catalog where list_recipient has contacts as its parent
         mock_catalog = MagicMock()
-        invoice_messages_stream = MagicMock()
-        invoice_messages_stream.stream = "invoice_messages"
-        invoice_payments_stream = MagicMock()
-        invoice_payments_stream.stream = "invoice_payments"
+        contacts_stream = MagicMock()
+        contacts_stream.stream = "contacts"
+        list_recipient_stream = MagicMock()
+        list_recipient_stream.stream = "list_recipient"
         mock_catalog.get_selected_streams.return_value = [
-            invoice_messages_stream,
-            invoice_payments_stream
+            contacts_stream,
+            list_recipient_stream
         ]
         state = {}
 
         client = MagicMock()
         config = {}
 
-        sync(client, config, mock_catalog, state)
+        # Mock the STREAMS dictionary to return stream instances with parent relationship
+        with patch("tap_mailjet.sync.STREAMS") as mock_streams:
+            parent_stream_instance = MagicMock()
+            parent_stream_instance.parent = ""
+            parent_stream_instance.sync.return_value = 0
+            
+            child_stream_instance = MagicMock()
+            child_stream_instance.parent = "contacts"
+            
+            def create_stream(name):
+                def factory(client, catalog_stream):
+                    if name == "contacts":
+                        return parent_stream_instance
+                    elif name == "list_recipient":
+                        return child_stream_instance
+                return factory
+            
+            mock_streams.__getitem__.side_effect = lambda name: create_stream(name)
+            
+            sync(client, config, mock_catalog, state)
 
-        self.assertEqual(mock_sync.call_count, 1)
+            # Only parent stream should be synced, child is skipped due to parent relationship
+            self.assertEqual(parent_stream_instance.sync.call_count, 1)
+            self.assertEqual(child_stream_instance.sync.call_count, 0)
 
     @patch("singer.get_currently_syncing")
     @patch("singer.set_currently_syncing")
