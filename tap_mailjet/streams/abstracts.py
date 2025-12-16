@@ -99,15 +99,9 @@ class BaseStream(ABC):
 
     def get_records(self) -> Iterator:
         """Interacts with api client interaction and pagination."""
-        # Set pagination parameters
         self.params["Limit"] = self.page_size
-        self.params["Offset"] = 0
-        
-        max_pages = 10000  # Safety limit
-        current_page = 0
-        has_more_data = True
-        
-        while has_more_data and current_page < max_pages:
+        next_page = 1
+        while next_page:
             response = self.client.make_request(
                 self.http_method,
                 self.url_endpoint,
@@ -181,7 +175,7 @@ class IncrementalStream(BaseStream):
         return get_bookmark(
             state,
             stream,
-            replication_key,
+            key or (self.replication_keys[0] if self.replication_keys else None),
             self.client.config["start_date"],
         )
 
@@ -191,11 +185,11 @@ class IncrementalStream(BaseStream):
         if not (key or self.replication_keys):
             return state
 
-        replication_key = key or (self.replication_keys[0] if isinstance(self.replication_keys, list) else self.replication_keys)
-        current_bookmark = get_bookmark(state, stream, replication_key, self.client.config["start_date"])
+        bookmark_key = key or (self.replication_keys[0] if self.replication_keys else None)
+        current_bookmark = get_bookmark(state, stream, bookmark_key, self.client.config["start_date"])
         value = max(current_bookmark, value)
         return write_bookmark(
-            state, stream, replication_key, value
+            state, stream, bookmark_key, value
         )
     
     def set_incremental_params(self, bookmark_date: str) -> None:
@@ -235,10 +229,17 @@ class IncrementalStream(BaseStream):
                     LOGGER.error(f"Failed to transform record in {self.tap_stream_id}: {record.get('ID', 'unknown')}, Error: {err}")
                     raise
 
-                replication_key = self.replication_keys[0] if isinstance(self.replication_keys, list) else self.replication_keys
-                record_bookmark = transformed_record.get(replication_key)
+                if not self.replication_keys:
+                    LOGGER.error(f"No replication keys defined for stream {self.tap_stream_id}")
+                    raise ValueError(f"No replication keys defined for stream {self.tap_stream_id}")
                 
-                if record_bookmark and record_bookmark >= bookmark_date:
+                replication_key = self.replication_keys[0]
+                if replication_key not in transformed_record:
+                    LOGGER.error(f"Replication key '{replication_key}' not found in record for stream {self.tap_stream_id}")
+                    raise KeyError(f"Replication key '{replication_key}' not found in record")
+                
+                record_bookmark = transformed_record[replication_key]
+                if record_bookmark >= bookmark_date:
                     if self.is_selected():
                         write_record(self.tap_stream_id, transformed_record)
                         counter.increment()
