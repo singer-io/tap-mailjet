@@ -50,7 +50,13 @@ class Client:
         self._session = session()
         self.base_url = "https://api.mailjet.com/v3/REST"
         config_request_timeout = config.get("request_timeout")
-        self.request_timeout = float(config_request_timeout) if config_request_timeout else REQUEST_TIMEOUT
+        if config_request_timeout is None:
+            self.request_timeout = REQUEST_TIMEOUT
+        else:
+            try:
+                self.request_timeout = float(config_request_timeout)
+            except (TypeError, ValueError):
+                raise ValueError(f"Invalid value for request_timeout: {config_request_timeout!r}")
 
     def __enter__(self):
         self.check_api_credentials()
