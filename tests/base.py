@@ -116,7 +116,7 @@ class mailjetBaseTest(BaseCase):
     def get_credentials():
         """Authentication information for the test account."""
         credentials_dict = {}
-        creds = {'api_token': 'API_TOKEN', 'api_version': 'API_VERSION'}
+        creds = {'api_key': 'TAP_MAILJET_API_KEY', 'secret_key': 'TAP_MAILJET_SECRET_KEY'}
 
         for cred in creds:
             credentials_dict[cred] = os.getenv(creds[cred])
