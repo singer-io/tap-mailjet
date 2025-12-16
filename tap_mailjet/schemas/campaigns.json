@@ -1,1 +1,153 @@
-{}
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "IsDeleted": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "IsStarred": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "CampaignType": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ClickTracked": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "CreatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "CustomValue": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "FirstMessageID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "FromEmail": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "FromID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "FromName": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "HasHtmlCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "HasTxtCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ListID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "NewsLetterID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "OpenTracked": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SegmentationID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SendEndAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "SendStartAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "SpamassScore": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Status": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Subject": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "UnsubscribeTrackedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "WorkflowID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        }
+    }
+}

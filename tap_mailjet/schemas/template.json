@@ -1,1 +1,128 @@
-{}
+{
+    "type": "object",
+    "properties": {
+        "Author": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Categories": {
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "type": [
+                    "string",
+                    "null"
+                ]
+            }
+        },
+        "Copyright": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Description": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "EditMode": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "IsStarred": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "IsTextPartGenerationEnabled": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "Locale": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Name": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "OwnerType": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Presets": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Purposes": {
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "type": [
+                    "string",
+                    "null"
+                ]
+            }
+        },
+        "ID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "OwnerId": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Previews": {
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "type": [
+                    "string",
+                    "null"
+                ]
+            }
+        },
+        "CreatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "LastUpdatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        }
+    },
+    "additionalProperties": false
+}

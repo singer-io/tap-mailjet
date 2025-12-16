@@ -1,1 +1,58 @@
-{}
+{
+    "type": "object",
+    "properties": {
+        "ID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "CampaignID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ContactID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Status": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "CreatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "DeliveredAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "OpenedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "ClickedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        }
+    },
+    "additionalProperties": false
+}
