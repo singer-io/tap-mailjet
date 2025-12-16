@@ -90,7 +90,7 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 100
             },
             "click_statistics": {
-                cls.PRIMARY_KEYS: { "ID" },
+                cls.PRIMARY_KEYS: { "MessageID", "ContactID", "ClickedAt" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: { "ClickedAt" },
                 cls.OBEYS_START_DATE: False,
