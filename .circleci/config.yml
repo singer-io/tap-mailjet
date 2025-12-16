@@ -8,14 +8,14 @@ jobs:
       - run:
           name: "Setup virtual env"
           command: |
-            python -m venv /usr/local/share/virtualenvs/tap-mailjet
+            uv venv --python 3.12 /usr/local/share/virtualenvs/tap-mailjet
             source /usr/local/share/virtualenvs/tap-mailjet/bin/activate
-            pip install -U setuptools
-            pip install .[dev]
+            uv pip install -U setuptools
+            uv pip install .[dev]
       - run:
           name: "JSON Validator"
           command: |
-            source /usr/local/share/virtualenvs/tap-tester/bin/activate
+            source /usr/local/share/virtualenvs/tap-mailjet/bin/activate
             stitch-validate-json tap_mailjet/schemas/*.json
       - run:
           name: "pylint"
