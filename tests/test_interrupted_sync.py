@@ -29,10 +29,10 @@ class mailjetInterruptedSyncTest(InterruptedSyncTest, mailjetBaseTest):
         return {
             "currently_syncing": "messages",
             "bookmarks": {
-                "messages": { "ArrivedAt" : "2020-01-01T00:00:00Z"},
-                "campaigns": { "CreatedAt" : "2020-01-01T00:00:00Z"},
-                "message_information": { "CreatedAt" : "2020-01-01T00:00:00Z"},
-                "click_statistics": { "ClickedAt" : "2020-01-01T00:00:00Z"},
+                "messages": { "ArrivedAt" : "2025-11-15T00:00:00Z"},
+                "campaigns": { "CreatedAt" : "2025-11-15T00:00:00Z"},
+                "message_information": { "CreatedAt" : "2025-11-15T00:00:00Z"},
+                "click_statistics": { "ClickedAt" : "2025-11-15T00:00:00Z"},
             }
         }
 
