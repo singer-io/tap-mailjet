@@ -126,7 +126,7 @@ class mailjetBaseTest(BaseCase):
     def get_properties(self, original: bool = True):
         """Configuration of properties required for the tap."""
         return_value = {
-            "start_date": "2022-07-01T00:00:00Z"
+            "start_date": "2025-01-01T00:00:00Z"
         }
         if original:
             return return_value
