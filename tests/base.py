@@ -76,11 +76,11 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 100
             },
             "message_information": {
-                cls.PRIMARY_KEYS: { "ID" },
-                cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: { "CreatedAt" },
-                cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+            cls.PRIMARY_KEYS: { "ID" },
+            cls.REPLICATION_METHOD: cls.INCREMENTAL,
+            cls.REPLICATION_KEYS: { "CreatedAt" },
+            cls.OBEYS_START_DATE: False,
+            cls.API_LIMIT: 100
             },
             "geo_statistics": {
                 cls.PRIMARY_KEYS: set(),
@@ -90,7 +90,7 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 100
             },
             "click_statistics": {
-                cls.PRIMARY_KEYS: { "MessageID", "ContactID", "ClickedAt" },
+                cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: { "ClickedAt" },
                 cls.OBEYS_START_DATE: False,
