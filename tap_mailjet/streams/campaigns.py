@@ -4,7 +4,7 @@ class Campaigns(IncrementalStream):
     tap_stream_id = "campaigns"
     key_properties = ["ID"]
     replication_method = "INCREMENTAL"
-    replication_keys = "CreatedAt"
+    replication_keys = ["CreatedAt"]
     data_key = "Data"
     path = "campaign"
 

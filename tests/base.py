@@ -17,7 +17,7 @@ class mailjetBaseTest(BaseCase):
     Metadata describing streams. A bunch of shared methods that are used
     in tap-tester tests. Shared tap-specific methods (as needed).
     """
-    start_date = "2019-01-01T00:00:00Z"
+    start_date = "2025-11-01T00:00:00Z"
 
     @staticmethod
     def tap_name():
@@ -38,77 +38,77 @@ class mailjetBaseTest(BaseCase):
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: { "ArrivedAt" },
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "contacts": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "contacts_list": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "list_recipient": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "campaigns": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: { "CreatedAt" },
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "template": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "message_information": {
-            cls.PRIMARY_KEYS: { "ID" },
-            cls.REPLICATION_METHOD: cls.INCREMENTAL,
-            cls.REPLICATION_KEYS: { "CreatedAt" },
-            cls.OBEYS_START_DATE: False,
-            cls.API_LIMIT: 100
+                cls.PRIMARY_KEYS: { "ID" },
+                cls.REPLICATION_METHOD: cls.INCREMENTAL,
+                cls.REPLICATION_KEYS: { "CreatedAt" },
+                cls.OBEYS_START_DATE: False,
+                cls.API_LIMIT: 10
             },
             "geo_statistics": {
-                cls.PRIMARY_KEYS: { "ID" },
+                cls.PRIMARY_KEYS: set(),
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "click_statistics": {
-                cls.PRIMARY_KEYS: { "ID" },
+                cls.PRIMARY_KEYS: { "MessageID", "ContactID", "ClickedAt", "Url" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: { "ClickedAt" },
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "top_link_clicked": {
-                cls.PRIMARY_KEYS: { "ID" },
+                cls.PRIMARY_KEYS: { "LinkId" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             },
             "campaign_overview": {
                 cls.PRIMARY_KEYS: { "ID" },
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
-                cls.API_LIMIT: 100
+                cls.API_LIMIT: 10
             }
         }
 
@@ -125,12 +125,7 @@ class mailjetBaseTest(BaseCase):
 
     def get_properties(self, original: bool = True):
         """Configuration of properties required for the tap."""
-        return_value = {
-            "start_date": "2022-07-01T00:00:00Z"
+        return {
+            "start_date": self.start_date
         }
-        if original:
-            return return_value
-
-        return_value["start_date"] = self.start_date
-        return return_value
 
