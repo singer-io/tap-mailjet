@@ -74,7 +74,7 @@ This tap:
 
 **[geo_statistics](https://dev.mailjet.com/email/reference/statistics#v3_get_geostatistics)**
 - Data Key = Data
-- Primary keys: ['ID']
+- Primary keys: []
 - Replication strategy: FULL_TABLE
 
 **[click_statistics](https://dev.mailjet.com/email/reference/message-events#v3_get_clickstatistics)**
