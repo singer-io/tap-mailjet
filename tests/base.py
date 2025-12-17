@@ -76,11 +76,11 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 10
             },
             "message_information": {
-            cls.PRIMARY_KEYS: { "ID" },
-            cls.REPLICATION_METHOD: cls.INCREMENTAL,
-            cls.REPLICATION_KEYS: { "CreatedAt" },
-            cls.OBEYS_START_DATE: False,
-            cls.API_LIMIT: 10
+                cls.PRIMARY_KEYS: { "ID" },
+                cls.REPLICATION_METHOD: cls.INCREMENTAL,
+                cls.REPLICATION_KEYS: { "CreatedAt" },
+                cls.OBEYS_START_DATE: False,
+                cls.API_LIMIT: 10
             },
             "geo_statistics": {
                 cls.PRIMARY_KEYS: set(),
