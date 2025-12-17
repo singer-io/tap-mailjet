@@ -11,7 +11,12 @@ class mailjetPaginationTest(PaginationTest, mailjetBaseTest):
         return "tap_tester_mailjet_pagination_test"
 
     def streams_to_test(self):
-        streams_to_exclude = set()
+        streams_to_exclude = {
+            # geo_statistics has no primary keys - it returns aggregate statistics
+            # grouped by country without unique identifiers, which makes pagination
+            # deduplication impossible to verify
+            "geo_statistics",
+        }
         return self.expected_stream_names().difference(streams_to_exclude)
 
     def test_record_count_greater_than_page_limit(self):  # type: ignore[override]

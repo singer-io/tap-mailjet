@@ -17,7 +17,7 @@ class mailjetBaseTest(BaseCase):
     Metadata describing streams. A bunch of shared methods that are used
     in tap-tester tests. Shared tap-specific methods (as needed).
     """
-    start_date = "2025-01-01T00:00:00Z"
+    start_date = "2025-11-01T00:00:00Z"
 
     @staticmethod
     def tap_name():
@@ -90,7 +90,7 @@ class mailjetBaseTest(BaseCase):
                 cls.API_LIMIT: 10
             },
             "click_statistics": {
-                cls.PRIMARY_KEYS: { "ID" },
+                cls.PRIMARY_KEYS: { "MessageID", "ContactID", "ClickedAt", "Url" },
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: { "ClickedAt" },
                 cls.OBEYS_START_DATE: False,
@@ -125,12 +125,7 @@ class mailjetBaseTest(BaseCase):
 
     def get_properties(self, original: bool = True):
         """Configuration of properties required for the tap."""
-        return_value = {
-            "start_date": "2025-01-01T00:00:00Z"
+        return {
+            "start_date": self.start_date
         }
-        if original:
-            return return_value
-
-        return_value["start_date"] = self.start_date
-        return return_value
 
