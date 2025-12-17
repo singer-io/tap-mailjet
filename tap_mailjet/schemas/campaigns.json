@@ -1,6 +1,5 @@
 {
     "type": "object",
-    "additionalProperties": false,
     "properties": {
         "IsDeleted": {
             "type": [
@@ -99,12 +98,6 @@
                 "null"
             ]
         },
-        "SegmentationID": {
-            "type": [
-                "integer",
-                "null"
-            ]
-        },
         "SendEndAt": {
             "type": [
                 "string",
@@ -138,12 +131,6 @@
             ]
         },
         "UnsubscribeTrackedCount": {
-            "type": [
-                "integer",
-                "null"
-            ]
-        },
-        "WorkflowID": {
             "type": [
                 "integer",
                 "null"
