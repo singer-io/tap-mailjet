@@ -50,7 +50,8 @@ class Client:
         self._session = session()
         self.base_url = "https://api.mailjet.com/v3/REST"
         config_request_timeout = config.get("request_timeout")
-        if config_request_timeout is None:
+        # Treat None, empty string, or 0 as default timeout
+        if config_request_timeout is None or config_request_timeout == "" or config_request_timeout == 0:
             self.request_timeout = REQUEST_TIMEOUT
         else:
             try:
@@ -69,8 +70,8 @@ class Client:
         pass
 
     def authenticate(self, headers: Dict, params: Dict) -> Tuple[Dict, Dict]:
-        """Authenticates the request with the token"""
-        headers["Authorization"] = self.config["api_access"]
+        """Authenticates the request with Basic Auth using api_key and secret_key"""
+        # Mailjet uses HTTP Basic Auth with api_key as username and secret_key as password
         return headers, params
 
     def make_request(
@@ -90,12 +91,16 @@ class Client:
         body = body or {}
         endpoint = endpoint or f"{self.base_url}/{path}"
         headers, params = self.authenticate(headers, params)
+
+        auth = (self.config["api_key"], self.config["secret_key"])
+        
         return self.__make_request(
             method, endpoint,
             headers=headers,
             params=params,
             data=body,
-            timeout=self.request_timeout
+            timeout=self.request_timeout,
+            auth=auth
         )
 
     @backoff.on_exception(
