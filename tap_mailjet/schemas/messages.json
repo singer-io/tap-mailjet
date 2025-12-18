@@ -40,7 +40,7 @@
         },
         "Delay": {
             "type": [
-                "string",
+                "integer",
                 "null"
             ]
         },
@@ -106,7 +106,7 @@
         },
         "SpamassassinScore": {
             "type": [
-                "string",
+                "integer",
                 "null"
             ]
         },

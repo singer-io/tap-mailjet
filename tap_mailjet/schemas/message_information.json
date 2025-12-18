@@ -72,7 +72,7 @@
         },
         "SpamAssassinScore": {
             "type": [
-                "string",
+                "integer",
                 "null"
             ]
         }
