@@ -32,9 +32,7 @@ class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
         return self.expected_stream_names().difference(streams_to_exclude)
 
     def calculate_new_bookmarks(self):
-        """Calculates new bookmarks by looking through sync 1 data to determine
-        a bookmark that will sync 2 records in sync 2 (plus any necessary look
-        back data)"""
+        """Calculate new bookmarks to sync at least 2 records in the next sync."""
         new_bookmarks = {
             "messages": { "ArrivedAt" : "2025-11-20T00:00:00Z"},
             "campaigns": { "CreatedAt" : "2025-11-20T00:00:00Z"},
