@@ -16,6 +16,8 @@ class mailjetPaginationTest(PaginationTest, mailjetBaseTest):
             # grouped by country without unique identifiers, which makes pagination
             # deduplication impossible to verify
             "geo_statistics",
+            # top_link_clicked has no test data available in the test account
+            "top_link_clicked",
         }
         return self.expected_stream_names().difference(streams_to_exclude)
 
