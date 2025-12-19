@@ -12,13 +12,22 @@ class mailjetStartDateTest(StartDateTest, mailjetBaseTest):
         return "tap_tester_mailjet_start_date_test"
 
     def streams_to_test(self):
-        streams_to_exclude = {}
+        streams_to_exclude = {
+            # Unsupported Full-Table Streams
+            'contacts',
+            'contacts_list',
+            'list_recipient',
+            'template',
+            'geo_statistics',
+            'top_link_clicked',
+            'campaign_overview'
+        }
         return self.expected_stream_names().difference(streams_to_exclude)
 
     @property
     def start_date_1(self):
-        return "2015-03-25T00:00:00Z"
+        return "2025-11-01T00:00:00Z"
     @property
     def start_date_2(self):
-        return "2017-01-25T00:00:00Z"
+        return "2025-12-02T00:00:00Z"
 

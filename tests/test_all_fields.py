@@ -15,6 +15,10 @@ class mailjetAllFields(AllFieldsTest, mailjetBaseTest):
         return "tap_tester_mailjet_all_fields_test"
 
     def streams_to_test(self):
-        streams_to_exclude = {}
+        # Exclude streams with no test data available in the test account
+        streams_to_exclude = {
+            'geo_statistics',
+            'top_link_clicked'
+        }
         return self.expected_stream_names().difference(streams_to_exclude)
 
