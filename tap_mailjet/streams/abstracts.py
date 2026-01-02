@@ -102,12 +102,11 @@ class BaseStream(ABC):
         self.params["Limit"] = self.page_size
         current_page = 0
         has_more_data = True
-        max_pages = 10000  # Safety limit to prevent infinite loops
         
         if "Offset" not in self.params:
             self.params["Offset"] = 0
         
-        while has_more_data and current_page < max_pages:
+        while has_more_data:
             response = self.client.make_request(
                 self.http_method,
                 self.url_endpoint,

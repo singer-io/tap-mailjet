@@ -87,8 +87,7 @@
         },
         "ID": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "OwnerId": {

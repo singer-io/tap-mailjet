@@ -3,8 +3,7 @@
     "properties": {
         "ClickedAt": {
             "type": [
-                "string",
-                "null"
+                "string"
             ],
             "format": "date-time"
         },
@@ -16,8 +15,7 @@
         },
         "ContactID": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "ID": {
@@ -28,14 +26,12 @@
         },
         "MessageID": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "Url": {
             "type": [
-                "string",
-                "null"
+                "string"
             ]
         },
         "UserAgentID": {

@@ -9,8 +9,7 @@
         },
         "LinkId": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "Url": {

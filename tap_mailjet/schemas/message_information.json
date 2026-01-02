@@ -28,8 +28,7 @@
         },
         "ID": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "MessageSize": {
