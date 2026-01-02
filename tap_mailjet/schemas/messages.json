@@ -1,1 +1,149 @@
-{}
+{
+    "type": "object",
+    "properties": {
+        "ArrivedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "AttachmentCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "AttemptCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "CampaignID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ContactAlt": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "ContactID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Delay": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "DestinationID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "FilterTime": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ID": {
+            "type": [
+                "integer"
+            ]
+        },
+        "IsClickTracked": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "IsHTMLPartIncluded": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "IsOpenTracked": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "IsTextPartIncluded": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "IsUnsubTracked": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "MessageSize": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SenderID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SpamassassinScore": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SpamassRules": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "StateID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "StatePermanent": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "Status": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Subject": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "UUID": {
+            "type": [
+                "string",
+                "null"
+            ]
+        }
+    }
+}

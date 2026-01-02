@@ -1,1 +1,44 @@
-{}
+{
+    "type": "object",
+    "properties": {
+        "ClickedAt": {
+            "type": [
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "ClickedDelay": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ContactID": {
+            "type": [
+                "integer"
+            ]
+        },
+        "ID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "MessageID": {
+            "type": [
+                "integer"
+            ]
+        },
+        "Url": {
+            "type": [
+                "string"
+            ]
+        },
+        "UserAgentID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        }
+    }
+}

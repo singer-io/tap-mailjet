@@ -1,1 +1,82 @@
-{}
+{
+    "type": "object",
+    "properties": {
+        "ClickedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "DeliveredCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "EditMode": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "EditType": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "ID": {
+            "type": [
+                "integer"
+            ]
+        },
+        "IDType": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "OpenedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ProcessedCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "SendTimeStart": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Starred": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "Status": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Subject": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "Title": {
+            "type": [
+                "string",
+                "null"
+            ]
+        }
+    }
+}
