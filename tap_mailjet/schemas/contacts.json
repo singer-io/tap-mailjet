@@ -41,8 +41,7 @@
         },
         "ID": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "IsOptInPending": {

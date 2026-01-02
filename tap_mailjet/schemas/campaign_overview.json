@@ -27,8 +27,7 @@
         },
         "ID": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "IDType": {

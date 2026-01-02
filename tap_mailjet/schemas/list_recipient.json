@@ -15,8 +15,7 @@
         },
         "ID": {
             "type": [
-                "integer",
-                "null"
+                "integer"
             ]
         },
         "IsActive": {
