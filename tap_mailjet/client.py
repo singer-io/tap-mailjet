@@ -69,11 +69,6 @@ class Client:
     def check_api_credentials(self) -> None:
         pass
 
-    def authenticate(self, headers: Dict, params: Dict) -> Tuple[Dict, Dict]:
-        """Authenticates the request with Basic Auth using api_key and secret_key"""
-        # Mailjet uses HTTP Basic Auth with api_key as username and secret_key as password
-        return headers, params
-
     def make_request(
         self,
         method: str,
@@ -90,7 +85,6 @@ class Client:
         headers = headers or {}
         body = body or {}
         endpoint = endpoint or f"{self.base_url}/{path}"
-        headers, params = self.authenticate(headers, params)
 
         auth = (self.config["api_key"], self.config["secret_key"])
         
