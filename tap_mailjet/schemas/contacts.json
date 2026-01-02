@@ -1,0 +1,88 @@
+{
+    "type": "object",
+    "properties": {
+        "IsExcludedFromCampaigns": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "Name": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "CreatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "DeliveredCount": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "Email": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "ExclusionFromCampaignsUpdatedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "ID": {
+            "type": [
+                "integer"
+            ]
+        },
+        "IsOptInPending": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "IsSpamComplaining": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "LastActivityAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "LastUpdateAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "UnsubscribedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "UnsubscribedBy": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        }
+    }
+}

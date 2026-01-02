@@ -1,0 +1,54 @@
+{
+    "type": "object",
+    "properties": {
+        "IsUnsubscribed": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "ContactID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ID": {
+            "type": [
+                "integer"
+            ]
+        },
+        "IsActive": {
+            "type": [
+                "boolean",
+                "null"
+            ]
+        },
+        "ListID": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "ListName": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "SubscribedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "UnsubscribedAt": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        }
+    }
+}
