@@ -8,10 +8,10 @@ class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
     bookmark_format = "%Y-%m-%dT%H:%M:%S.%fZ"
     initial_bookmarks = {
         "bookmarks": {
-            "messages": { "A" : "2020-01-01T00:00:00Z"},
-            "campaigns": { "C" : "2020-01-01T00:00:00Z"},
-            "message_information": { "C" : "2020-01-01T00:00:00Z"},
-            "click_statistics": { "C" : "2020-01-01T00:00:00Z"},
+            "messages": { "ArrivedAt" : "2025-11-01T00:00:00Z"},
+            "campaigns": { "CreatedAt" : "2025-11-01T00:00:00Z"},
+            "message_information": { "CreatedAt" : "2025-11-01T00:00:00Z"},
+            "click_statistics": { "ClickedAt" : "2025-11-01T00:00:00Z"},
         }
     }
     @staticmethod
@@ -19,6 +19,26 @@ class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
         return "tap_tester_mailjet_bookmark_test"
 
     def streams_to_test(self):
-        streams_to_exclude = {}
+        streams_to_exclude = {
+            # Unsupported Full-Table Streams
+            'contacts',
+            'contacts_list',
+            'list_recipient',
+            'template',
+            'geo_statistics',
+            'top_link_clicked',
+            'campaign_overview'
+        }
         return self.expected_stream_names().difference(streams_to_exclude)
+
+    def calculate_new_bookmarks(self):
+        """Calculate new bookmarks to sync at least 2 records in the next sync."""
+        new_bookmarks = {
+            "messages": { "ArrivedAt" : "2025-11-20T00:00:00Z"},
+            "campaigns": { "CreatedAt" : "2025-11-20T00:00:00Z"},
+            "message_information": { "CreatedAt" : "2025-11-20T00:00:00Z"},
+            "click_statistics": { "ClickedAt" : "2025-11-20T00:00:00Z"},
+        }
+
+        return new_bookmarks
 
