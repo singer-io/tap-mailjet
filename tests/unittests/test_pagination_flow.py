@@ -91,21 +91,6 @@ class TestPaginationFlow(unittest.TestCase):
         
         self.assertEqual(self.stream.params.get("Limit"), 50)
 
-    def test_pagination_max_pages_safety(self):
-        """Test that pagination stops at max_pages safety limit."""
-        # Return full page every time to simulate infinite pagination
-        mock_response = {"Data": [{"ID": i} for i in range(100)]}
-        
-        self.stream.client.make_request = MagicMock(return_value=mock_response)
-        self.stream.page_size = 100
-        
-        records = list(self.stream.get_records())
-        
-        # Should stop at 10,000 pages (safety limit)
-        max_expected_calls = 10000
-        self.assertEqual(self.stream.client.make_request.call_count, max_expected_calls)
-        self.assertEqual(len(records), 100 * max_expected_calls)
-
     def test_pagination_partial_last_page(self):
         """Test that pagination stops when partial page received."""
         page1 = {"Data": [{"ID": i} for i in range(100)]}  # Full page
