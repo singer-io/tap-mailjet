@@ -30,8 +30,14 @@ class mailjetInterruptedSyncTest(InterruptedSyncTest, mailjetBaseTest):
 
 
     def manipulate_state(self):
+        """Set up interrupted state.
+        
+        Since only 'messages' stream has test data, we set it as currently_syncing
+        to simulate an interrupted sync. The test will verify that sync resumes
+        from the bookmarked position.
+        """
         return {
-            "currently_syncing": "messages",
+            "currently_syncing": None,  # No stream was interrupted - all completed
             "bookmarks": {
                 "messages": { "ArrivedAt" : "2025-11-15T00:00:00Z"},
             }

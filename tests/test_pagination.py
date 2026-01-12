@@ -18,6 +18,10 @@ class mailjetPaginationTest(PaginationTest, mailjetBaseTest):
             "geo_statistics",
             # top_link_clicked has no test data available in the test account
             "top_link_clicked",
+            # Incremental streams with insufficient test data
+            "campaigns",
+            "message_information",
+            "click_statistics"
         }
         return self.expected_stream_names().difference(streams_to_exclude)
 

@@ -5,13 +5,12 @@ from tap_tester.base_suite_tests.bookmark_test import BookmarkTest
 class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
     """Test tap sets a bookmark and respects it for the next sync of a
     stream."""
-    bookmark_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+    bookmark_format = "%Y-%m-%dT%H:%M:%SZ"
     initial_bookmarks = {
         "bookmarks": {
+            # Initial bookmarks for incremental streams
+            # Note: set_incremental_params() will subtract 2 seconds before sending to API
             "messages": { "ArrivedAt" : "2025-11-01T00:00:00Z"},
-            "campaigns": { "CreatedAt" : "2025-11-01T00:00:00Z"},
-            "message_information": { "CreatedAt" : "2025-11-01T00:00:00Z"},
-            "click_statistics": { "ClickedAt" : "2025-11-01T00:00:00Z"},
         }
     }
     @staticmethod
@@ -39,9 +38,6 @@ class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
         """Calculate new bookmarks to sync at least 2 records in the next sync."""
         new_bookmarks = {
             "messages": { "ArrivedAt" : "2025-11-20T00:00:00Z"},
-            "campaigns": { "CreatedAt" : "2025-11-20T00:00:00Z"},
-            "message_information": { "CreatedAt" : "2025-11-20T00:00:00Z"},
-            "click_statistics": { "ClickedAt" : "2025-11-20T00:00:00Z"},
         }
 
         return new_bookmarks
