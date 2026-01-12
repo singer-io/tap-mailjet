@@ -5,7 +5,7 @@ from tap_tester.base_suite_tests.bookmark_test import BookmarkTest
 class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
     """Test tap sets a bookmark and respects it for the next sync of a
     stream."""
-    bookmark_format = "%Y-%m-%dT%H:%M:%SZ"
+    bookmark_format = "%Y-%m-%dT%H:%M:%S.%fZ"
     initial_bookmarks = {
         "bookmarks": {
             # Initial bookmarks for incremental streams
