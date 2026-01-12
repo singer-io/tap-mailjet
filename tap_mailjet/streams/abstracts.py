@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import json
+from datetime import datetime, timedelta
 from typing import Any, Dict, Tuple, List, Iterator
 from singer import (
     Transformer,
@@ -203,10 +204,19 @@ class IncrementalStream(BaseStream):
         )
     
     def set_incremental_params(self, bookmark_date: str) -> None:
-        """Set API parameters for incremental sync. Override in subclass if needed."""
-        # Default: use FromTS parameter for date filtering
-        # Specific streams can override this method for custom parameters
-        pass
+        """Set FromTS parameter for incremental sync with datetime adjustment.
+        
+        Mailjet API's FromTS parameter is exclusive (>), not inclusive (>=).
+        Subtract 2 seconds to ensure we don't miss any records due to timestamp precision.
+        """
+        try:
+            dt = datetime.fromisoformat(bookmark_date.replace('Z', '+00:00'))
+            adjusted_date = (dt - timedelta(seconds=2)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            LOGGER.info(f"Setting FromTS parameter for {self.tap_stream_id} stream: {adjusted_date} from (bookmark: {bookmark_date})")
+            self.update_params(FromTS=adjusted_date)
+        except Exception as e:
+            LOGGER.warning(f"Failed to adjust bookmark date for {self.tap_stream_id}, using original: {e}")
+            self.update_params(FromTS=bookmark_date)
 
 
     def sync(
