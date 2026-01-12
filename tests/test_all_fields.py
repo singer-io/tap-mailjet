@@ -18,7 +18,11 @@ class mailjetAllFields(AllFieldsTest, mailjetBaseTest):
         # Exclude streams with no test data available in the test account
         streams_to_exclude = {
             'geo_statistics',
-            'top_link_clicked'
+            'top_link_clicked',
+            # Incremental streams with insufficient test data
+            'campaigns',
+            'message_information',
+            'click_statistics'
         }
         return self.expected_stream_names().difference(streams_to_exclude)
 

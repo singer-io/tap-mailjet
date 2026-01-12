@@ -20,7 +20,11 @@ class mailjetInterruptedSyncTest(InterruptedSyncTest, mailjetBaseTest):
             'template',
             'geo_statistics',
             'top_link_clicked',
-            'campaign_overview'
+            'campaign_overview',
+            # Incremental streams with insufficient test data
+            'campaigns',
+            'message_information',
+            'click_statistics'
         }
         return self.expected_stream_names().difference(streams_to_exclude)
 
@@ -30,9 +34,6 @@ class mailjetInterruptedSyncTest(InterruptedSyncTest, mailjetBaseTest):
             "currently_syncing": "messages",
             "bookmarks": {
                 "messages": { "ArrivedAt" : "2025-11-15T00:00:00Z"},
-                "campaigns": { "CreatedAt" : "2025-11-15T00:00:00Z"},
-                "message_information": { "CreatedAt" : "2025-11-15T00:00:00Z"},
-                "click_statistics": { "ClickedAt" : "2025-11-15T00:00:00Z"},
             }
         }
 

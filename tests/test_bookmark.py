@@ -27,7 +27,11 @@ class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
             'template',
             'geo_statistics',
             'top_link_clicked',
-            'campaign_overview'
+            'campaign_overview',
+            # Incremental streams with insufficient test data
+            'campaigns',
+            'message_information',
+            'click_statistics'
         }
         return self.expected_stream_names().difference(streams_to_exclude)
 

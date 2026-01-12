@@ -16,6 +16,10 @@ class mailjetAutomaticFields(MinimumSelectionTest, mailjetBaseTest):
         streams_to_exclude = {
             "geo_statistics",  # No automatic fields
             "top_link_clicked",  # No test data available
+            # Incremental streams with insufficient test data
+            'campaigns',
+            'message_information',
+            'click_statistics'
         }
         return self.expected_stream_names().difference(streams_to_exclude)
 
