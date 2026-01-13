@@ -207,7 +207,7 @@ class IncrementalStream(BaseStream):
         """Set FromTS parameter for incremental sync with datetime adjustment.
         
         Mailjet API's FromTS parameter is exclusive (>), not inclusive (>=).
-        Subtract 2 seconds to ensure we don't miss any records due to timestamp precision.
+        Subtract 1 seconds to ensure we don't miss any records due to timestamp precision.
         """
         try:
             dt = datetime.fromisoformat(bookmark_date.replace('Z', '+00:00'))
