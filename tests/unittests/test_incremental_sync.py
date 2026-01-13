@@ -138,7 +138,7 @@ class TestIncrementalBookmark(unittest.TestCase):
     @patch("tap_mailjet.streams.abstracts.get_bookmark")
     @patch("tap_mailjet.streams.abstracts.metrics.record_counter")
     def test_incremental_sets_fromts_parameter(self, mock_counter, mock_get_bookmark, mock_write_record):
-        """Test that incremental sync sets FromTS parameter with 2-second adjustment."""
+        """Test that incremental sync sets FromTS parameter with 1-second adjustment."""
         bookmark_date = "2025-01-01T00:00:00Z"
         mock_get_bookmark.return_value = bookmark_date
         
@@ -149,10 +149,10 @@ class TestIncrementalBookmark(unittest.TestCase):
         
         self.stream.sync(state, transformer)
         
-        # Verify FromTS parameter was set with 2-second adjustment
+        # Verify FromTS parameter was set with 1-second adjustment
         self.assertIn("FromTS", self.stream.params)
-        # Expected: "2025-01-01T00:00:00Z" - 2 seconds = "2024-12-31T23:59:58.000000Z"
-        expected_fromts = "2024-12-31T23:59:58.000000Z"
+        # Expected: "2025-01-01T00:00:00Z" - 1 seconds = "2024-12-31T23:59:59.000000Z"
+        expected_fromts = "2024-12-31T23:59:59.000000Z"
         self.assertEqual(self.stream.params["FromTS"], expected_fromts)
 
     @patch("tap_mailjet.streams.abstracts.write_record")
