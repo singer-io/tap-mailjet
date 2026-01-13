@@ -211,7 +211,7 @@ class IncrementalStream(BaseStream):
         """
         try:
             dt = datetime.fromisoformat(bookmark_date.replace('Z', '+00:00'))
-            adjusted_date = (dt - timedelta(seconds=2)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            adjusted_date = (dt - timedelta(seconds=1)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
             LOGGER.info(f"Setting FromTS parameter for {self.tap_stream_id} stream: {adjusted_date} from (bookmark: {bookmark_date})")
             self.update_params(FromTS=adjusted_date)
         except Exception as e:
