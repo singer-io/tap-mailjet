@@ -56,6 +56,10 @@ class mailjetServiceUnavailableError(mailjetBackoffError):
     """class representing 503 status code."""
     pass
 
+class mailjetGatewayTimeoutError(mailjetBackoffError):
+    """class representing 504 status code."""
+    pass
+
 ERROR_CODE_EXCEPTION_MAPPING = {
     400: {
         "raise_exception": mailjetBadRequestError,
@@ -101,6 +105,10 @@ ERROR_CODE_EXCEPTION_MAPPING = {
     503: {
         "raise_exception": mailjetServiceUnavailableError,
         "message": "API service is currently unavailable."
+    },
+    504: {
+        "raise_exception": mailjetGatewayTimeoutError,
+        "message": "Server did not receive a timely response from the upstream server."
     }
 }
 

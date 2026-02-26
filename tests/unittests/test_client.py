@@ -115,6 +115,7 @@ class TestBackoffRetry(unittest.TestCase):
         ["501 error", 501, MockResponse(501), mailjetNotImplementedError, "The server does not support the functionality required to fulfill the request."],
         ["502 error", 502, MockResponse(502), mailjetBadGatewayError, "Server received an invalid response."],
         ["503 error", 503, MockResponse(503), mailjetServiceUnavailableError, "API service is currently unavailable."],
+        ["504 error", 504, MockResponse(504), mailjetGatewayTimeoutError, "Server did not receive a timely response from the upstream server."],
     ])
     @patch("time.sleep")
     def test_http_errors_with_retry(self, test_name, error_code, mock_response, error, error_message, mock_sleep):
@@ -176,3 +177,17 @@ class TestBackoffRetry(unittest.TestCase):
         
         # Verify sleep was called with increasing delays (exponential backoff)
         self.assertTrue(mock_sleep.call_count >= 3)
+
+    @patch("time.sleep")
+    def test_unmapped_5xx_triggers_retry(self, mock_sleep):
+        """Test that an unmapped 5xx status code triggers backoff retry via mailjetBackoffError."""
+        mock_response = MockResponse(507)
+        with patch.object(self.client._session, "request", return_value=mock_response) as mock_request:
+            with self.assertRaises(mailjetBackoffError) as e:
+                self.client._Client__make_request("GET", "https://api.example.com/resource")
+
+            expected_error_message = "HTTP-error-code: 507, Error: Unknown Error"
+            self.assertEqual(str(e.exception), expected_error_message)
+            # Should retry 5 times
+            self.assertEqual(mock_request.call_count, 5)
+            self.assertTrue(mock_sleep.called)

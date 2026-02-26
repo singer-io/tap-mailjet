@@ -30,9 +30,19 @@ def raise_for_error(response: requests.Response) -> None:
                 response.status_code, {}
             ).get("message", "Unknown Error")
             message = f"HTTP-error-code: {response.status_code}, Error: {response_json.get('message', error_message)}"
+
+        # Determine the exception class: use mapping if available,
+        # fall back to mailjetBackoffError for any unmapped 5xx, or mailjetError otherwise.
         exc = ERROR_CODE_EXCEPTION_MAPPING.get(response.status_code, {}).get(
-            "raise_exception", mailjetError
+            "raise_exception"
         )
+        if exc is None:
+            exc = mailjetBackoffError if response.status_code >= 500 else mailjetError
+
+        # Log 5xx errors before raising to provide visibility during retries
+        if response.status_code >= 500:
+            LOGGER.warning("%s (will be retried)", message)
+
         raise exc(message, response) from None
 
 class Client:
