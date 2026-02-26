@@ -37,7 +37,7 @@ class mailjetBookMarkTest(BookmarkTest, mailjetBaseTest):
     def calculate_new_bookmarks(self):
         """Calculate new bookmarks to sync at least 2 records in the next sync."""
         new_bookmarks = {
-            "messages": { "ArrivedAt" : "2025-11-20T00:00:00Z"},
+            "messages": { "ArrivedAt" : "2025-12-23T00:00:00Z"},
         }
 
         return new_bookmarks

@@ -33,5 +33,5 @@ class mailjetStartDateTest(StartDateTest, mailjetBaseTest):
         return "2025-11-01T00:00:00Z"
     @property
     def start_date_2(self):
-        return "2025-12-02T00:00:00Z"
+        return "2025-12-20T00:00:00Z"
 
