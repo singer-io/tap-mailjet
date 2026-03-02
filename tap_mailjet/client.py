@@ -37,11 +37,7 @@ def raise_for_error(response: requests.Response) -> None:
             "raise_exception"
         )
         if exc is None:
-            exc = mailjetBackoffError if response.status_code >= 500 else mailjetError
-
-        # Log 5xx errors before raising to provide visibility during retries
-        if response.status_code >= 500:
-            LOGGER.warning("%s (will be retried)", message)
+            exc = (mailjetBackoffError if 500 <= response.status_code < 600 else mailjetError)
 
         raise exc(message, response) from None
 
