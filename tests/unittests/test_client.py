@@ -187,3 +187,57 @@ class TestBackoffRetry(unittest.TestCase):
             # Should retry 5 times
             self.assertEqual(mock_request.call_count, 5)
             self.assertTrue(mock_sleep.called)
+
+    @patch("time.sleep")
+    def test_boundary_499_no_retry(self, mock_sleep):
+        """Test that 499 (just below 5xx range) raises MailjetError with no retry."""
+        mock_response = MockResponse(499)
+        with patch.object(self.client._session, "request", return_value=mock_response) as mock_request:
+            with self.assertRaises(MailjetError) as e:
+                self.client._Client__make_request("GET", "https://api.example.com/resource")
+
+            expected_error_message = "HTTP-error-code: 499, Error: Unknown Error"
+            self.assertEqual(str(e.exception), expected_error_message)
+            # Should NOT retry (not a 5xx error)
+            self.assertEqual(mock_request.call_count, 1)
+            self.assertFalse(mock_sleep.called)
+
+    @patch("time.sleep")
+    def test_boundary_500_retries(self, mock_sleep):
+        """Test that 500 (start of 5xx range) triggers backoff retry."""
+        mock_response = MockResponse(500)
+        with patch.object(self.client._session, "request", return_value=mock_response) as mock_request:
+            with self.assertRaises(MailjetInternalServerError):
+                self.client._Client__make_request("GET", "https://api.example.com/resource")
+
+            # Should retry 5 times
+            self.assertEqual(mock_request.call_count, 5)
+            self.assertTrue(mock_sleep.called)
+
+    @patch("time.sleep")
+    def test_boundary_599_retries(self, mock_sleep):
+        """Test that 599 (end of 5xx range) triggers backoff retry via MailjetBackoffError."""
+        mock_response = MockResponse(599)
+        with patch.object(self.client._session, "request", return_value=mock_response) as mock_request:
+            with self.assertRaises(MailjetBackoffError) as e:
+                self.client._Client__make_request("GET", "https://api.example.com/resource")
+
+            expected_error_message = "HTTP-error-code: 599, Error: Unknown Error"
+            self.assertEqual(str(e.exception), expected_error_message)
+            # Should retry 5 times
+            self.assertEqual(mock_request.call_count, 5)
+            self.assertTrue(mock_sleep.called)
+
+    @patch("time.sleep")
+    def test_boundary_600_no_retry(self, mock_sleep):
+        """Test that 600 (just above 5xx range) raises MailjetError with no retry."""
+        mock_response = MockResponse(600)
+        with patch.object(self.client._session, "request", return_value=mock_response) as mock_request:
+            with self.assertRaises(MailjetError) as e:
+                self.client._Client__make_request("GET", "https://api.example.com/resource")
+
+            expected_error_message = "HTTP-error-code: 600, Error: Unknown Error"
+            self.assertEqual(str(e.exception), expected_error_message)
+            # Should NOT retry (not a 5xx error)
+            self.assertEqual(mock_request.call_count, 1)
+            self.assertFalse(mock_sleep.called)
