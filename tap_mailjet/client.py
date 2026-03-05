@@ -6,7 +6,7 @@ from requests import session
 from requests.exceptions import Timeout, ConnectionError, ChunkedEncodingError
 from singer import get_logger, metrics
 
-from tap_mailjet.exceptions import ERROR_CODE_EXCEPTION_MAPPING, mailjetError, mailjetBackoffError
+from tap_mailjet.exceptions import ERROR_CODE_EXCEPTION_MAPPING, MailjetError, MailjetBackoffError
 
 LOGGER = get_logger()
 REQUEST_TIMEOUT = 300
@@ -32,12 +32,12 @@ def raise_for_error(response: requests.Response) -> None:
             message = f"HTTP-error-code: {response.status_code}, Error: {response_json.get('message', error_message)}"
 
         # Determine the exception class: use mapping if available,
-        # fall back to mailjetBackoffError for any unmapped 5xx, or mailjetError otherwise.
+        # fall back to MailjetBackoffError for any unmapped 5xx, or MailjetError otherwise.
         exc = ERROR_CODE_EXCEPTION_MAPPING.get(response.status_code, {}).get(
             "raise_exception"
         )
         if exc is None:
-            exc = (mailjetBackoffError if 500 <= response.status_code < 600 else mailjetError)
+            exc = (MailjetBackoffError if 500 <= response.status_code < 600 else MailjetError)
 
         raise exc(message, response) from None
 
@@ -110,7 +110,7 @@ class Client:
             ConnectionError,
             ChunkedEncodingError,
             Timeout,
-            mailjetBackoffError
+            MailjetBackoffError
         ),
         max_tries=5,
         factor=2,
