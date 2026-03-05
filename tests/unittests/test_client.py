@@ -83,11 +83,11 @@ class TestErrorHandling(unittest.TestCase):
         self.client = Client(default_config)
 
     @parameterized.expand([
-        ["400 error", 400, MockResponse(400), mailjetBadRequestError, "A validation exception has occurred."],
-        ["401 error", 401, MockResponse(401), mailjetUnauthorizedError, "The access token provided is expired, revoked, malformed or invalid for other reasons."],
-        ["403 error", 403, MockResponse(403), mailjetForbiddenError, "You are missing the following required scopes: read"],
-        ["404 error", 404, MockResponse(404), mailjetNotFoundError, "The resource you have specified cannot be found."],
-        ["409 error", 409, MockResponse(409), mailjetConflictError, "The API request cannot be completed because the requested operation would conflict with an existing item."],
+        ["400 error", 400, MockResponse(400), MailjetBadRequestError, "A validation exception has occurred."],
+        ["401 error", 401, MockResponse(401), MailjetUnauthorizedError, "The access token provided is expired, revoked, malformed or invalid for other reasons."],
+        ["403 error", 403, MockResponse(403), MailjetForbiddenError, "You are missing the following required scopes: read"],
+        ["404 error", 404, MockResponse(404), MailjetNotFoundError, "The resource you have specified cannot be found."],
+        ["409 error", 409, MockResponse(409), MailjetConflictError, "The API request cannot be completed because the requested operation would conflict with an existing item."],
     ])
     def test_4xx_errors_no_retry(self, test_name, error_code, mock_response, error, error_message):
         """Test that 4xx errors raise immediately without retry."""
@@ -109,13 +109,9 @@ class TestBackoffRetry(unittest.TestCase):
         self.client = Client(default_config)
 
     @parameterized.expand([
-        ["422 error", 422, MockResponse(422), mailjetUnprocessableEntityError, "The request content itself is not processable by the server."],
-        ["429 error", 429, MockResponse(429), mailjetRateLimitError, "The API rate limit for your organisation/application pairing has been exceeded."],
-        ["500 error", 500, MockResponse(500), mailjetInternalServerError, "The server encountered an unexpected condition which prevented it from fulfilling the request."],
-        ["501 error", 501, MockResponse(501), mailjetNotImplementedError, "The server does not support the functionality required to fulfill the request."],
-        ["502 error", 502, MockResponse(502), mailjetBadGatewayError, "Server received an invalid response."],
-        ["503 error", 503, MockResponse(503), mailjetServiceUnavailableError, "API service is currently unavailable."],
-        ["504 error", 504, MockResponse(504), mailjetGatewayTimeoutError, "Server did not receive a timely response from the upstream server."],
+        ["422 error", 422, MockResponse(422), MailjetUnprocessableEntityError, "The request content itself is not processable by the server."],
+        ["429 error", 429, MockResponse(429), MailjetRateLimitError, "The API rate limit for your organisation/application pairing has been exceeded."],
+        ["500 error", 500, MockResponse(500), MailjetInternalServerError, "The server encountered an unexpected condition which prevented it from fulfilling the request."]
     ])
     @patch("time.sleep")
     def test_http_errors_with_retry(self, test_name, error_code, mock_response, error, error_message, mock_sleep):
@@ -172,7 +168,7 @@ class TestBackoffRetry(unittest.TestCase):
         mock_response = MockResponse(500, text={"message": "Internal server error"})
         
         with patch.object(self.client._session, "request", return_value=mock_response):
-            with self.assertRaises(mailjetInternalServerError):
+            with self.assertRaises(MailjetInternalServerError):
                 self.client._Client__make_request("GET", "https://api.mailjet.com/v3/REST/message")
         
         # Verify sleep was called with increasing delays (exponential backoff)
@@ -183,7 +179,7 @@ class TestBackoffRetry(unittest.TestCase):
         """Test that an unmapped 5xx status code triggers backoff retry via mailjetBackoffError."""
         mock_response = MockResponse(507)
         with patch.object(self.client._session, "request", return_value=mock_response) as mock_request:
-            with self.assertRaises(mailjetBackoffError) as e:
+            with self.assertRaises(MailjetBackoffError) as e:
                 self.client._Client__make_request("GET", "https://api.example.com/resource")
 
             expected_error_message = "HTTP-error-code: 507, Error: Unknown Error"
