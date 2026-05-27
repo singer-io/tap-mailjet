@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 setup(name="tap-mailjet",
-      version="0.0.2",
+      version="0.0.3",
       description="Singer.io tap for extracting data from mailjet API",
       author="Stitch",
       url="http://singer.io",
@@ -12,7 +12,7 @@ setup(name="tap-mailjet",
       py_modules=["tap_mailjet"],
       install_requires=[
         "singer-python==6.1.1",
-        "requests==2.32.4",
+        "requests==2.33.0",
         "backoff==2.2.1",
       ],
       extras_require={
