@@ -1,3 +1,7 @@
+# Changelog
+
+# 0.0.3
+  * Bump requests to 2.33.0 for security updates [#10](https://github.com/singer-io/tap-mailjet/pull/10)
 
   # Changelog
 
